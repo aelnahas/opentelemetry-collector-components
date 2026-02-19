@@ -296,6 +296,8 @@ func (p *LogProcessor) ConsumeLogs(ctx context.Context, ld plog.Logs) error {
 					if routing.IsErrorEvent(logRecord.Attributes()) {
 						// Override the resource-level data stream for error logs
 						routing.EncodeErrorDataStream(logRecord.Attributes(), routing.DataStreamTypeLogs)
+						// Translate error attributes to ECS format
+						ecs.TranslateErrorAttributes(logRecord.Attributes(), resource, logRecord.Body().AsString())
 					}
 				}
 			}

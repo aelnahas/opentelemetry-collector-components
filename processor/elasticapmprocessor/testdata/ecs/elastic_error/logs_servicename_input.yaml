@@ -22,6 +22,9 @@ resourceLogs:
               - key: processor.event
                 value:
                   stringValue: "error"
+              - key: error.id
+                value:
+                  stringValue: "error-servicename-123"
               - key: exception.message
                 value:
                   stringValue: "Something went wrong"

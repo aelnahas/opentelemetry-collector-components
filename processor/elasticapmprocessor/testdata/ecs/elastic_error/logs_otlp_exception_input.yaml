@@ -19,6 +19,9 @@ resourceLogs:
     scopeLogs:
       - logRecords:
           - attributes:
+              - key: error.id
+                value:
+                  stringValue: "error-otlp-exception-123"
               - key: exception.message
                 value:
                   stringValue: "Null pointer exception"

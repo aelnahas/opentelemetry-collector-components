@@ -34,6 +34,9 @@ resourceLogs:
               - key: processor.event
                 value:
                   stringValue: error
+              - key: error.id
+                value:
+                  stringValue: error-servicename-123
               - key: exception.message
                 value:
                   stringValue: Something went wrong
@@ -49,6 +52,24 @@ resourceLogs:
               - key: data_stream.namespace
                 value:
                   stringValue: default
+              - key: error.exception.handled
+                value:
+                  boolValue: true
+              - key: error.grouping_key
+                value:
+                  stringValue: a334b8fdd25f8fb3e632228494604ee1
+              - key: error.message
+                value:
+                  stringValue: Error occurred
+              - key: error.grouping_name
+                value:
+                  stringValue: Error occurred
+              - key: error.exception.type
+                value:
+                  stringValue: RuntimeError
+              - key: error.exception.message
+                value:
+                  stringValue: Something went wrong
             body:
               stringValue: Error occurred
             timeUnixNano: "1000000000"

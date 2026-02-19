@@ -31,6 +31,9 @@ resourceLogs:
     scopeLogs:
       - logRecords:
           - attributes:
+              - key: error.id
+                value:
+                  stringValue: error-otlp-exception-123
               - key: exception.message
                 value:
                   stringValue: Null pointer exception
@@ -49,6 +52,24 @@ resourceLogs:
               - key: data_stream.namespace
                 value:
                   stringValue: default
+              - key: error.exception.handled
+                value:
+                  boolValue: true
+              - key: error.grouping_key
+                value:
+                  stringValue: c4a82339057881dbc17b5d918f856197
+              - key: error.message
+                value:
+                  stringValue: Application error occurred
+              - key: error.grouping_name
+                value:
+                  stringValue: Application error occurred
+              - key: error.exception.type
+                value:
+                  stringValue: java.lang.NullPointerException
+              - key: error.exception.message
+                value:
+                  stringValue: Null pointer exception
             body:
               stringValue: Application error occurred
             timeUnixNano: "1000000000"

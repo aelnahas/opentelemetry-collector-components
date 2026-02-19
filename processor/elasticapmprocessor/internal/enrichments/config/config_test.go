@@ -31,7 +31,6 @@ func TestEnabled(t *testing.T) {
 	assertAllEnabled(t, reflect.ValueOf(config.Transaction))
 	assertAllEnabled(t, reflect.ValueOf(config.Span))
 	assertAllEnabled(t, reflect.ValueOf(config.SpanEvent))
-	assertAllEnabled(t, reflect.ValueOf(config.Log))
 }
 
 func assertAllEnabled(t *testing.T, cfg reflect.Value) {

@@ -67,12 +67,20 @@ func TranslateErrorAttributes(attributes pcommon.Map, resource pcommon.Resource,
 
 	attribute.PutStr(attributes, elasticattr.ErrorGroupingKey, getErrGroupingKey(exceptionType, exceptionStacktrace, exceptionMessage, logMessage))
 
-	groupingName := logMessage
-	if groupingName == "" {
-		groupingName = exceptionMessage
+	errorMessage := logMessage
+	if errorMessage == "" {
+		errorMessage = exceptionMessage
 	}
-	if groupingName != "" {
-		attribute.PutStr(attributes, elasticattr.ErrorGroupingName, groupingName)
+	if errorMessage != "" {
+		attribute.PutStr(attributes, elasticattr.ErrorMessage, errorMessage)
+		attribute.PutStr(attributes, elasticattr.ErrorGroupingName, errorMessage)
+	}
+
+	if exceptionType != "" {
+		attribute.PutStr(attributes, elasticattr.ErrorExceptionTypeKey, exceptionType)
+	}
+	if exceptionMessage != "" {
+		attribute.PutStr(attributes, elasticattr.ErrorExceptionMessageKey, exceptionMessage)
 	}
 }
 

@@ -66,6 +66,9 @@ func TestTranslateErrorAttributes(t *testing.T) {
 				elasticattr.ErrorExceptionHandled,
 				elasticattr.ErrorGroupingKey,
 				elasticattr.ErrorGroupingName,
+				elasticattr.ErrorExceptionTypeKey,
+				elasticattr.ErrorExceptionMessageKey,
+				elasticattr.ErrorMessage,
 			},
 		},
 		{
@@ -97,8 +100,17 @@ func TestTranslateErrorAttributes(t *testing.T) {
 						t.Errorf("error.grouping_key = %q, want %q", v.Str(), want)
 					}
 				},
+				elasticattr.ErrorExceptionTypeKey: func(t *testing.T, v pcommon.Value) {
+					if v.Str() != "MyError" {
+						t.Errorf("error.exception.type = %q, want MyError", v.Str())
+					}
+				},
 			},
-			wantAbsent: []string{elasticattr.ErrorGroupingName},
+			wantAbsent: []string{
+				elasticattr.ErrorGroupingName,
+				elasticattr.ErrorExceptionMessageKey,
+				elasticattr.ErrorMessage,
+			},
 		},
 		{
 			name:       "exception message only - grouping key from message",
@@ -120,6 +132,16 @@ func TestTranslateErrorAttributes(t *testing.T) {
 						t.Errorf("error.grouping_name = %q, want %q", v.Str(), "something broke")
 					}
 				},
+				elasticattr.ErrorExceptionMessageKey: func(t *testing.T, v pcommon.Value) {
+					if v.Str() != "something broke" {
+						t.Errorf("error.exception.message = %q, want something broke", v.Str())
+					}
+				},
+				elasticattr.ErrorMessage: func(t *testing.T, v pcommon.Value) {
+					if v.Str() != "something broke" {
+						t.Errorf("error.message = %q, want something broke", v.Str())
+					}
+				},
 			},
 		},
 		{
@@ -139,6 +161,21 @@ func TestTranslateErrorAttributes(t *testing.T) {
 				elasticattr.ErrorGroupingName: func(t *testing.T, v pcommon.Value) {
 					if v.Str() != "msg" {
 						t.Errorf("error.grouping_name = %q, want msg", v.Str())
+					}
+				},
+				elasticattr.ErrorExceptionTypeKey: func(t *testing.T, v pcommon.Value) {
+					if v.Str() != "TypeError" {
+						t.Errorf("error.exception.type = %q, want TypeError", v.Str())
+					}
+				},
+				elasticattr.ErrorExceptionMessageKey: func(t *testing.T, v pcommon.Value) {
+					if v.Str() != "msg" {
+						t.Errorf("error.exception.message = %q, want msg", v.Str())
+					}
+				},
+				elasticattr.ErrorMessage: func(t *testing.T, v pcommon.Value) {
+					if v.Str() != "msg" {
+						t.Errorf("error.message = %q, want msg", v.Str())
 					}
 				},
 			},
@@ -163,6 +200,21 @@ func TestTranslateErrorAttributes(t *testing.T) {
 						t.Errorf("error.grouping_name = %q, want failed", v.Str())
 					}
 				},
+				elasticattr.ErrorExceptionTypeKey: func(t *testing.T, v pcommon.Value) {
+					if v.Str() != "Err" {
+						t.Errorf("error.exception.type = %q, want Err", v.Str())
+					}
+				},
+				elasticattr.ErrorExceptionMessageKey: func(t *testing.T, v pcommon.Value) {
+					if v.Str() != "failed" {
+						t.Errorf("error.exception.message = %q, want failed", v.Str())
+					}
+				},
+				elasticattr.ErrorMessage: func(t *testing.T, v pcommon.Value) {
+					if v.Str() != "failed" {
+						t.Errorf("error.message = %q, want failed", v.Str())
+					}
+				},
 			},
 		},
 		{
@@ -176,6 +228,11 @@ func TestTranslateErrorAttributes(t *testing.T) {
 				elasticattr.ErrorExceptionHandled: func(t *testing.T, v pcommon.Value) {
 					if v.Bool() {
 						t.Error("error.exception.handled = true, want false when exception.escaped true")
+					}
+				},
+				elasticattr.ErrorExceptionTypeKey: func(t *testing.T, v pcommon.Value) {
+					if v.Str() != "E" {
+						t.Errorf("error.exception.type = %q, want E", v.Str())
 					}
 				},
 			},
@@ -193,6 +250,11 @@ func TestTranslateErrorAttributes(t *testing.T) {
 						t.Error("error.exception.handled = false, want true when exception.escaped false")
 					}
 				},
+				elasticattr.ErrorExceptionTypeKey: func(t *testing.T, v pcommon.Value) {
+					if v.Str() != "E" {
+						t.Errorf("error.exception.type = %q, want E", v.Str())
+					}
+				},
 			},
 		},
 		{
@@ -206,6 +268,11 @@ func TestTranslateErrorAttributes(t *testing.T) {
 				elasticattr.ErrorID: func(t *testing.T, v pcommon.Value) {
 					if v.Str() != "existing-id-0000000000000000" {
 						t.Errorf("error.id = %q, want existing-id-0000000000000000 (not overwritten)", v.Str())
+					}
+				},
+				elasticattr.ErrorExceptionTypeKey: func(t *testing.T, v pcommon.Value) {
+					if v.Str() != "E" {
+						t.Errorf("error.exception.type = %q, want E", v.Str())
 					}
 				},
 			},
@@ -223,6 +290,11 @@ func TestTranslateErrorAttributes(t *testing.T) {
 						t.Errorf("error.grouping_key = %q, want existing-grouping-key (not overwritten)", v.Str())
 					}
 				},
+				elasticattr.ErrorExceptionTypeKey: func(t *testing.T, v pcommon.Value) {
+					if v.Str() != "E" {
+						t.Errorf("error.exception.type = %q, want E", v.Str())
+					}
+				},
 			},
 		},
 		{
@@ -238,10 +310,15 @@ func TestTranslateErrorAttributes(t *testing.T) {
 						t.Error("error.exception.handled = true, want false (existing value preserved)")
 					}
 				},
+				elasticattr.ErrorExceptionTypeKey: func(t *testing.T, v pcommon.Value) {
+					if v.Str() != "E" {
+						t.Errorf("error.exception.type = %q, want E", v.Str())
+					}
+				},
 			},
 		},
 		{
-			name:       "log message overrides exception message for grouping_name (MIS behavior)",
+			name:       "log message overrides exception message for grouping_name",
 			logMessage: "log body message",
 			setupAttrs: func(attrs pcommon.Map) {
 				attrs.PutStr(string(semconv.ExceptionTypeKey), "ErrType")
@@ -251,6 +328,21 @@ func TestTranslateErrorAttributes(t *testing.T) {
 				elasticattr.ErrorGroupingName: func(t *testing.T, v pcommon.Value) {
 					if v.Str() != "log body message" {
 						t.Errorf("error.grouping_name = %q, want log body message (log overrides exception)", v.Str())
+					}
+				},
+				elasticattr.ErrorExceptionTypeKey: func(t *testing.T, v pcommon.Value) {
+					if v.Str() != "ErrType" {
+						t.Errorf("error.exception.type = %q, want ErrType", v.Str())
+					}
+				},
+				elasticattr.ErrorExceptionMessageKey: func(t *testing.T, v pcommon.Value) {
+					if v.Str() != "exception message" {
+						t.Errorf("error.exception.message = %q, want exception message", v.Str())
+					}
+				},
+				elasticattr.ErrorMessage: func(t *testing.T, v pcommon.Value) {
+					if v.Str() != "log body message" {
+						t.Errorf("error.message = %q, want log body message (log overrides exception)", v.Str())
 					}
 				},
 			},

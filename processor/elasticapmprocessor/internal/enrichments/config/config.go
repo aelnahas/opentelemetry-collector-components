@@ -117,6 +117,14 @@ type SpanEventConfig struct {
 // ElasticLogConfig configures the enrichment attributes for logs
 type ElasticLogConfig struct {
 	ProcessorEvent AttributeConfig `mapstructure:"processor_event"`
+
+	// For exceptions/errors
+	ErrorID               AttributeConfig `mapstructure:"error_id"`
+	ErrorExceptionHandled AttributeConfig `mapstructure:"error_exception_handled"`
+	ErrorGroupingKey      AttributeConfig `mapstructure:"error_grouping_key"`
+	ErrorGroupingName     AttributeConfig `mapstructure:"error_grouping_name"`
+	ErrorExceptionMessage AttributeConfig `mapstructure:"error_exception_message"`
+	ErrorExceptionType    AttributeConfig `mapstructure:"error_exception_type"`
 }
 
 // ElasticMetricConfig configures the enrichment attributes for metrics
@@ -184,6 +192,15 @@ func Enabled() Config {
 			ErrorExceptionHandled: AttributeConfig{Enabled: true},
 			ErrorGroupingKey:      AttributeConfig{Enabled: true},
 			ErrorGroupingName:     AttributeConfig{Enabled: true},
+		},
+		Log: ElasticLogConfig{
+			ProcessorEvent:        AttributeConfig{Enabled: true},
+			ErrorID:               AttributeConfig{Enabled: true},
+			ErrorExceptionHandled: AttributeConfig{Enabled: true},
+			ErrorGroupingKey:      AttributeConfig{Enabled: true},
+			ErrorGroupingName:     AttributeConfig{Enabled: true},
+			ErrorExceptionMessage: AttributeConfig{Enabled: true},
+			ErrorExceptionType:    AttributeConfig{Enabled: true},
 		},
 	}
 }

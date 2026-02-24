@@ -26,15 +26,21 @@ import (
 
 func TestEnabled(t *testing.T) {
 	config := Enabled()
-	assertAllEnabled(t, reflect.ValueOf(config.Resource))
-	assertAllEnabled(t, reflect.ValueOf(config.Scope))
-	assertAllEnabled(t, reflect.ValueOf(config.Transaction))
-	assertAllEnabled(t, reflect.ValueOf(config.Span))
-	assertAllEnabled(t, reflect.ValueOf(config.SpanEvent))
+	assertAttributeConfigDefaults(t, reflect.ValueOf(config.Resource), nil)
+	assertAttributeConfigDefaults(t, reflect.ValueOf(config.Scope), nil)
+	assertAttributeConfigDefaults(t, reflect.ValueOf(config.Transaction), nil)
+	assertAttributeConfigDefaults(t, reflect.ValueOf(config.Span), nil)
+	assertAttributeConfigDefaults(t, reflect.ValueOf(config.SpanEvent), nil)
+	assertAttributeConfigDefaults(t, reflect.ValueOf(config.Log), []string{"ProcessorEvent"})
 }
 
-func assertAllEnabled(t *testing.T, cfg reflect.Value) {
+func assertAttributeConfigDefaults(t *testing.T, cfg reflect.Value, expectDisabled []string) {
 	t.Helper()
+
+	disabled := make(map[string]bool)
+	for _, name := range expectDisabled {
+		disabled[name] = true
+	}
 
 	// Fields that are intentionally disabled by default
 	disabledByDefault := map[string]bool{
@@ -48,6 +54,10 @@ func assertAllEnabled(t *testing.T, cfg reflect.Value) {
 		attrCfg, ok := rAttrCfg.(AttributeConfig)
 		require.True(t, ok, "must be a type of AttributeConfig")
 
+		if disabled[fieldName] {
+			require.False(t, attrCfg.Enabled, "%s must be disabled", fieldName)
+			continue
+		}
 		if disabledByDefault[fieldName] {
 			require.False(t, attrCfg.Enabled, "%s must be disabled by default", fieldName)
 		} else {

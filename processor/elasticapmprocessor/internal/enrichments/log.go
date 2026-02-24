@@ -18,11 +18,21 @@
 package enrichments // import "github.com/elastic/opentelemetry-collector-components/processor/elasticapmprocessor/internal/enrichments"
 
 import (
+	"crypto/md5"
+	"encoding/hex"
+	"io"
+
 	"github.com/elastic/opentelemetry-collector-components/internal/elasticattr"
 	"github.com/elastic/opentelemetry-collector-components/processor/elasticapmprocessor/internal/enrichments/attribute"
 	"github.com/elastic/opentelemetry-collector-components/processor/elasticapmprocessor/internal/enrichments/config"
 	"github.com/elastic/opentelemetry-collector-components/processor/elasticapmprocessor/internal/enrichments/mobile"
+	"github.com/elastic/opentelemetry-collector-components/processor/elasticapmprocessor/internal/routing"
 	"go.opentelemetry.io/collector/pdata/plog"
+)
+
+const (
+	// emptyExceptionMsg is used to replace an empty exception message only in ecs mode.
+	emptyExceptionMsg = "[EMPTY]"
 )
 
 func EnrichLog(resourceAttrs map[string]any, log plog.LogRecord, cfg config.Config) {
@@ -37,6 +47,10 @@ func EnrichLog(resourceAttrs map[string]any, log plog.LogRecord, cfg config.Conf
 		}
 		mobile.EnrichLogEvent(ctx, log)
 	}
+
+	if routing.IsErrorEvent(log.Attributes()) {
+		EnrichLogError(log, cfg)
+	}
 }
 
 // getEventName returns the event name from the log record.
@@ -50,4 +64,61 @@ func getEventName(logRecord plog.LogRecord) (string, bool) {
 		return attributeValue.AsString(), true
 	}
 	return "", false
+}
+
+// EnrichLogError enriches the log record with error attributes.
+// exists early if the are no exceptions or error messages.
+func EnrichLogError(logRecord plog.LogRecord, cfg config.Config) {
+	attributes := logRecord.Attributes()
+	ec := getErrorEventContext(attributes)
+
+	if ec.exceptionType == "" && ec.exceptionMessage == "" {
+		return
+	}
+
+	if ec.exceptionMessage == "" {
+		ec.exceptionMessage = emptyExceptionMsg
+	}
+
+	if cfg.Log.ErrorID.Enabled {
+		if id, err := generateErrorID(); err == nil {
+			attribute.PutStr(attributes, elasticattr.ErrorID, id)
+		}
+	}
+
+	if cfg.Log.ErrorExceptionHandled.Enabled {
+		attribute.PutBool(attributes, elasticattr.ErrorExceptionHandled, !ec.exceptionEscaped)
+	}
+	if cfg.Log.ErrorExceptionMessage.Enabled {
+		attribute.PutStr(attributes, elasticattr.ECSErrorExceptionMessage, ec.exceptionMessage)
+	}
+	if cfg.Log.ErrorExceptionType.Enabled && ec.exceptionType != "" {
+		attribute.PutStr(attributes, elasticattr.ECSErrorExceptionType, ec.exceptionType)
+	}
+	if cfg.Log.ErrorStackTrace.Enabled && ec.exceptionStacktrace != "" {
+		attribute.PutStr(attributes, elasticattr.ErrorStackTrace, ec.exceptionStacktrace)
+	}
+
+	// Note: this is a fallback to set the error.grouping_key attribute.
+	// For mobile crash events, the error.grouping_key is set by the mobile.EnrichLogEvent function.
+	if cfg.Log.ErrorGroupingKey.Enabled {
+		if key := getGenericErrorGroupingKey(ec); key != "" {
+			attribute.PutStr(attributes, elasticattr.ErrorGroupingKey, key)
+		}
+	}
+
+}
+
+func getGenericErrorGroupingKey(ec errorEventContext) string {
+	hash := md5.New()
+	if ec.exceptionType != "" {
+		io.WriteString(hash, ec.exceptionType)
+	}
+	if ec.exceptionMessage != "" {
+		io.WriteString(hash, ec.exceptionMessage)
+	}
+	if ec.exceptionStacktrace != "" {
+		io.WriteString(hash, ec.exceptionStacktrace)
+	}
+	return hex.EncodeToString(hash.Sum(nil))
 }

@@ -116,8 +116,6 @@ type SpanEventConfig struct {
 
 // ElasticLogConfig configures the enrichment attributes for logs
 type ElasticLogConfig struct {
-	ProcessorEvent AttributeConfig `mapstructure:"processor_event"`
-
 	// for errors/exceptions
 	ErrorID               AttributeConfig `mapstructure:"error_id"`
 	ErrorExceptionHandled AttributeConfig `mapstructure:"error_exception_handled"`
@@ -199,11 +197,6 @@ func Enabled() Config {
 			MetricsetName: AttributeConfig{Enabled: true},
 		},
 		Log: ElasticLogConfig{
-			// disabling this to keep it consistent with previous behaviour. Also,
-			// in certain cases like error logs, procssor events when the event is
-			// indexed.
-			// see: https://github.com/elastic/elasticsearch/blob/main/x-pack/plugin/apm-data/src/main/resources/index-templates/logs-apm.error%40template.yaml#L29
-			ProcessorEvent:        AttributeConfig{Enabled: false},
 			ErrorID:               AttributeConfig{Enabled: true},
 			ErrorExceptionHandled: AttributeConfig{Enabled: true},
 			ErrorGroupingKey:      AttributeConfig{Enabled: true},

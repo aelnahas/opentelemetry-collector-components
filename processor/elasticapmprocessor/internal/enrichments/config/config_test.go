@@ -31,7 +31,7 @@ func TestEnabled(t *testing.T) {
 	assertAttributeConfigDefaults(t, reflect.ValueOf(config.Transaction), nil)
 	assertAttributeConfigDefaults(t, reflect.ValueOf(config.Span), nil)
 	assertAttributeConfigDefaults(t, reflect.ValueOf(config.SpanEvent), nil)
-	assertAttributeConfigDefaults(t, reflect.ValueOf(config.Log), []string{"ProcessorEvent"})
+	assertAttributeConfigDefaults(t, reflect.ValueOf(config.Log), nil)
 }
 
 func assertAttributeConfigDefaults(t *testing.T, cfg reflect.Value, expectDisabled []string) {

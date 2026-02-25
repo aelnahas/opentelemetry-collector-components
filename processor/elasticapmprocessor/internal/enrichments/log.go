@@ -36,9 +36,6 @@ const (
 )
 
 func EnrichLog(resourceAttrs map[string]any, log plog.LogRecord, cfg config.Config) {
-	if cfg.Log.ProcessorEvent.Enabled {
-		attribute.PutStr(log.Attributes(), elasticattr.ProcessorEvent, "log")
-	}
 	eventName, ok := getEventName(log)
 	if ok {
 		ctx := mobile.EventContext{

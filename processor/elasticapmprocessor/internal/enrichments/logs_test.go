@@ -134,16 +134,16 @@ func TestEnrichLogError(t *testing.T) {
 	}
 
 	tests := []struct {
-		name                  string
-		setupConfig           func() config.Config
-		exceptionType         string
-		exceptionMessage      string
-		exceptionStacktrace   string
-		exceptionEscaped      bool
-		otherAttributes       map[string]any
-		wantAttributes        map[string]any
-		wantAbsentAttributes  []string
-		wantAttributeLengths  map[string]int // when set, assert attribute exists and its string value has this length
+		name                 string
+		setupConfig          func() config.Config
+		exceptionType        string
+		exceptionMessage     string
+		exceptionStacktrace  string
+		exceptionEscaped     bool
+		otherAttributes      map[string]any
+		wantAttributes       map[string]any
+		wantAbsentAttributes []string
+		wantAttributeLengths map[string]int // when set, assert attribute exists and its string value has this length
 	}{
 		{
 			name:            "no op when no exception type or message",
@@ -176,13 +176,13 @@ func TestEnrichLogError(t *testing.T) {
 			name:             "sets exception handled from escaped",
 			setupConfig:      config.Enabled,
 			exceptionMessage: "err",
-			exceptionEscaped:  true,
+			exceptionEscaped: true,
 			wantAttributes:   map[string]any{elasticattr.ErrorExceptionHandled: false},
 		},
 		{
 			name:                 "error id has length 32 when config enabled and not already set",
 			setupConfig:          config.Enabled,
-			exceptionMessage:    "err",
+			exceptionMessage:     "err",
 			wantAttributeLengths: map[string]int{elasticattr.ErrorID: 32},
 		},
 		{
@@ -283,27 +283,27 @@ func TestEnrichLogError(t *testing.T) {
 			},
 		},
 		{
-			name:        "does not overwrite existing error attributes",
-			setupConfig: config.Enabled,
-			exceptionType:        "Ex",
-			exceptionMessage:     "msg",
-			exceptionStacktrace:  "at existing.StackTrace()",
-			exceptionEscaped:     true,
+			name:                "does not overwrite existing error attributes",
+			setupConfig:         config.Enabled,
+			exceptionType:       "Ex",
+			exceptionMessage:    "msg",
+			exceptionStacktrace: "at existing.StackTrace()",
+			exceptionEscaped:    true,
 			otherAttributes: map[string]any{
 				elasticattr.ErrorID:                  "existing-error-id",
-				elasticattr.ErrorExceptionHandled:     true,
+				elasticattr.ErrorExceptionHandled:    true,
 				elasticattr.ECSErrorExceptionMessage: "existing message",
-				elasticattr.ECSErrorExceptionType:     "existing.type",
+				elasticattr.ECSErrorExceptionType:    "existing.type",
 				elasticattr.ErrorStackTrace:          "existing stack trace",
-				elasticattr.ErrorGroupingKey:          "existing-grouping-key",
+				elasticattr.ErrorGroupingKey:         "existing-grouping-key",
 			},
 			wantAttributes: map[string]any{
 				elasticattr.ErrorID:                  "existing-error-id",
 				elasticattr.ErrorExceptionHandled:    true,
 				elasticattr.ECSErrorExceptionMessage: "existing message",
-				elasticattr.ECSErrorExceptionType:     "existing.type",
+				elasticattr.ECSErrorExceptionType:    "existing.type",
 				elasticattr.ErrorStackTrace:          "existing stack trace",
-				elasticattr.ErrorGroupingKey:          "existing-grouping-key",
+				elasticattr.ErrorGroupingKey:         "existing-grouping-key",
 			},
 		},
 	}
@@ -326,7 +326,7 @@ func TestEnrichLogError(t *testing.T) {
 				attrs.PutBool(string(semconv.ExceptionEscapedKey), true)
 			}
 			for k, v := range tt.otherAttributes {
-				attrs.PutEmpty(k).FromRaw(v)
+				_ = attrs.PutEmpty(k).FromRaw(v)
 			}
 
 			EnrichLogError(lr, tt.setupConfig())

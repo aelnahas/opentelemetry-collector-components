@@ -70,6 +70,12 @@ resourceLogs:
               - key: timestamp.us
                 value:
                   intValue: "1000000"
+              - key: event.kind
+                value:
+                  stringValue: event
+              - key: event.type
+                value:
+                  stringValue: error
             body:
               stringValue: Application error occurred
             timeUnixNano: "1000000000"

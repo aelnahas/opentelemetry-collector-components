@@ -112,6 +112,13 @@ func EnrichLogError(logRecord plog.LogRecord, cfg config.Config) {
 		attribute.PutInt(attributes, elasticattr.TimestampUs, attribute.ToTimestampUS(ts))
 	}
 
+	if cfg.Log.EventConfig.EventKind.Enabled {
+		attributes.PutStr(elasticattr.EventKind, "event")
+	}
+
+	if cfg.Log.EventConfig.EventType.Enabled {
+		attributes.PutStr(elasticattr.EventType, "error")
+	}
 }
 
 func getGenericErrorGroupingKey(ec errorEventContext) string {

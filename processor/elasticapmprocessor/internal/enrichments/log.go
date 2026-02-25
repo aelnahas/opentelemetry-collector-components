@@ -120,13 +120,13 @@ func EnrichLogError(logRecord plog.LogRecord, cfg config.Config) {
 func getGenericErrorGroupingKey(ec errorEventContext) string {
 	hash := md5.New()
 	if ec.exceptionType != "" {
-		io.WriteString(hash, ec.exceptionType)
+		_, _ = io.WriteString(hash, ec.exceptionType)
 	}
 	if ec.exceptionMessage != "" {
-		io.WriteString(hash, ec.exceptionMessage)
+		_, _ = io.WriteString(hash, ec.exceptionMessage)
 	}
 	if ec.exceptionStacktrace != "" {
-		io.WriteString(hash, ec.exceptionStacktrace)
+		_, _ = io.WriteString(hash, ec.exceptionStacktrace)
 	}
 	return hex.EncodeToString(hash.Sum(nil))
 }

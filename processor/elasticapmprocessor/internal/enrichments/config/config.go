@@ -199,8 +199,10 @@ func Enabled() Config {
 			MetricsetName: AttributeConfig{Enabled: true},
 		},
 		Log: ElasticLogConfig{
-			// disabling ProcessorEvent since for error events it is
-			// set by document mapping
+			// disabling this to keep it consistent with previous behaviour. Also,
+			// in certain cases like error logs, procssor events when the event is
+			// indexed.
+			// see: https://github.com/elastic/elasticsearch/blob/main/x-pack/plugin/apm-data/src/main/resources/index-templates/logs-apm.error%40template.yaml#L29
 			ProcessorEvent:        AttributeConfig{Enabled: false},
 			ErrorID:               AttributeConfig{Enabled: true},
 			ErrorExceptionHandled: AttributeConfig{Enabled: true},

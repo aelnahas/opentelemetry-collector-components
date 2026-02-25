@@ -67,6 +67,9 @@ resourceLogs:
               - key: error.grouping_key
                 value:
                   stringValue: 7733ff34674dbdb285a538ffb51bbe60
+              - key: timestamp.us
+                value:
+                  intValue: "1000000"
             body:
               stringValue: Application error occurred
             timeUnixNano: "1000000000"

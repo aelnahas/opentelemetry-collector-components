@@ -208,7 +208,7 @@ func TestEnrichLogError(t *testing.T) {
 			name: "does not set error id when ErrorID config disabled",
 			setupConfig: func() config.Config {
 				c := config.Enabled()
-				c.Log.ErrorID = config.AttributeConfig{Enabled: false}
+				c.Log.ErrorConfig.ErrorID = config.AttributeConfig{Enabled: false}
 				return c
 			},
 			exceptionType:        "Ex",
@@ -223,7 +223,7 @@ func TestEnrichLogError(t *testing.T) {
 			name: "does not set error exception handled when config disabled",
 			setupConfig: func() config.Config {
 				c := config.Enabled()
-				c.Log.ErrorExceptionHandled = config.AttributeConfig{Enabled: false}
+				c.Log.ErrorExceptionConfig.ErrorExceptionHandled = config.AttributeConfig{Enabled: false}
 				return c
 			},
 			exceptionMessage:     "err",
@@ -235,7 +235,7 @@ func TestEnrichLogError(t *testing.T) {
 			name: "does not set error exception message when config disabled",
 			setupConfig: func() config.Config {
 				c := config.Enabled()
-				c.Log.ErrorExceptionMessage = config.AttributeConfig{Enabled: false}
+				c.Log.ErrorExceptionConfig.ErrorExceptionMessage = config.AttributeConfig{Enabled: false}
 				return c
 			},
 			exceptionType:        "Ex",
@@ -247,7 +247,7 @@ func TestEnrichLogError(t *testing.T) {
 			name: "does not set error exception type when config disabled",
 			setupConfig: func() config.Config {
 				c := config.Enabled()
-				c.Log.ErrorExceptionType = config.AttributeConfig{Enabled: false}
+				c.Log.ErrorExceptionConfig.ErrorExceptionType = config.AttributeConfig{Enabled: false}
 				return c
 			},
 			exceptionType:        "Ex",
@@ -259,7 +259,7 @@ func TestEnrichLogError(t *testing.T) {
 			name: "does not set error stack trace when config disabled",
 			setupConfig: func() config.Config {
 				c := config.Enabled()
-				c.Log.ErrorStackTrace = config.AttributeConfig{Enabled: false}
+				c.Log.ErrorConfig.ErrorStackTrace = config.AttributeConfig{Enabled: false}
 				return c
 			},
 			exceptionMessage:     "err",
@@ -271,7 +271,7 @@ func TestEnrichLogError(t *testing.T) {
 			name: "does not set error grouping key when config disabled",
 			setupConfig: func() config.Config {
 				c := config.Enabled()
-				c.Log.ErrorGroupingKey = config.AttributeConfig{Enabled: false}
+				c.Log.ErrorConfig.ErrorGroupingKey = config.AttributeConfig{Enabled: false}
 				return c
 			},
 			exceptionType:        "Ex",

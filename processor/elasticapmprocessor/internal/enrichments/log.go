@@ -77,34 +77,34 @@ func EnrichLogError(logRecord plog.LogRecord, cfg config.Config) {
 		ec.exceptionMessage = emptyExceptionMsg
 	}
 
-	if cfg.Log.ErrorID.Enabled {
+	if cfg.Log.ErrorConfig.ErrorID.Enabled {
 		if id, err := attribute.NewErrorID(); err == nil {
 			attribute.PutStr(attributes, elasticattr.ErrorID, id)
 		}
 	}
 
-	if cfg.Log.ErrorExceptionHandled.Enabled {
+	if cfg.Log.ErrorExceptionConfig.ErrorExceptionHandled.Enabled {
 		attribute.PutBool(attributes, elasticattr.ErrorExceptionHandled, !ec.exceptionEscaped)
 	}
-	if cfg.Log.ErrorExceptionMessage.Enabled {
+	if cfg.Log.ErrorExceptionConfig.ErrorExceptionMessage.Enabled {
 		attribute.PutStr(attributes, elasticattr.ECSErrorExceptionMessage, ec.exceptionMessage)
 	}
-	if cfg.Log.ErrorExceptionType.Enabled && ec.exceptionType != "" {
+	if cfg.Log.ErrorExceptionConfig.ErrorExceptionType.Enabled && ec.exceptionType != "" {
 		attribute.PutStr(attributes, elasticattr.ECSErrorExceptionType, ec.exceptionType)
 	}
-	if cfg.Log.ErrorStackTrace.Enabled && ec.exceptionStacktrace != "" {
+	if cfg.Log.ErrorConfig.ErrorStackTrace.Enabled && ec.exceptionStacktrace != "" {
 		attribute.PutStr(attributes, elasticattr.ErrorStackTrace, ec.exceptionStacktrace)
 	}
 
 	// Note: this is a fallback to set the error.grouping_key attribute.
 	// For mobile crash events, the error.grouping_key is set by the mobile.EnrichLogEvent function.
-	if cfg.Log.ErrorGroupingKey.Enabled {
+	if cfg.Log.ErrorConfig.ErrorGroupingKey.Enabled {
 		if key := getGenericErrorGroupingKey(ec); key != "" {
 			attribute.PutStr(attributes, elasticattr.ErrorGroupingKey, key)
 		}
 	}
 
-	if cfg.Log.TimestampUs.Enabled {
+	if cfg.Log.ErrorConfig.TimestampUs.Enabled {
 		ts := logRecord.Timestamp()
 		if ts == 0 {
 			ts = logRecord.ObservedTimestamp()

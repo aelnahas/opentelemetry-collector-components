@@ -719,15 +719,15 @@ func (s *spanEventEnrichmentContext) enrich(
 	}
 
 	// Span event represents exception
-	if cfg.ErrorID.Enabled {
+	if cfg.ErrorConfig.ErrorID.Enabled {
 		if id, err := attribute.NewErrorID(); err == nil {
 			attribute.PutStr(se.Attributes(), elasticattr.ErrorID, id)
 		}
 	}
-	if cfg.ErrorExceptionHandled.Enabled {
+	if cfg.ErrorExceptionConfig.ErrorExceptionHandled.Enabled {
 		attribute.PutBool(se.Attributes(), elasticattr.ErrorExceptionHandled, !s.exceptionEscaped)
 	}
-	if cfg.ErrorGroupingKey.Enabled {
+	if cfg.ErrorConfig.ErrorGroupingKey.Enabled {
 		// See https://github.com/elastic/apm-data/issues/299
 		hash := md5.New()
 		// ignoring errors in hashing
@@ -738,7 +738,7 @@ func (s *spanEventEnrichmentContext) enrich(
 		}
 		attribute.PutStr(se.Attributes(), elasticattr.ErrorGroupingKey, hex.EncodeToString(hash.Sum(nil)))
 	}
-	if cfg.ErrorGroupingName.Enabled && s.exceptionMessage != "" {
+	if cfg.ErrorConfig.ErrorGroupingName.Enabled && s.exceptionMessage != "" {
 		attribute.PutStr(se.Attributes(), elasticattr.ErrorGroupingName, s.exceptionMessage)
 	}
 

@@ -81,7 +81,7 @@ func EnrichLogError(logRecord plog.LogRecord, cfg config.Config) {
 	}
 
 	if cfg.Log.ErrorID.Enabled {
-		if id, err := generateErrorID(); err == nil {
+		if id, err := attribute.NewErrorID(); err == nil {
 			attribute.PutStr(attributes, elasticattr.ErrorID, id)
 		}
 	}
@@ -105,6 +105,14 @@ func EnrichLogError(logRecord plog.LogRecord, cfg config.Config) {
 		if key := getGenericErrorGroupingKey(ec); key != "" {
 			attribute.PutStr(attributes, elasticattr.ErrorGroupingKey, key)
 		}
+	}
+
+	if cfg.Log.TimestampUs.Enabled {
+		ts := logRecord.Timestamp()
+		if ts == 0 {
+			ts = logRecord.ObservedTimestamp()
+		}
+		attribute.PutInt(attributes, elasticattr.TimestampUs, attribute.ToTimestampUS(ts))
 	}
 
 }

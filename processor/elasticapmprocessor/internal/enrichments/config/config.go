@@ -125,6 +125,7 @@ type ElasticLogConfig struct {
 	ErrorExceptionType    AttributeConfig `mapstructure:"error_exception_type"`
 	ErrorExceptionMessage AttributeConfig `mapstructure:"error_exception_message"`
 	ErrorStackTrace       AttributeConfig `mapstructure:"error_stack_trace"`
+	TimestampUs           AttributeConfig `mapstructure:"timestamp_us"`
 }
 
 // ElasticMetricConfig configures the enrichment attributes for metrics
@@ -207,6 +208,7 @@ func Enabled() Config {
 			ErrorExceptionType:    AttributeConfig{Enabled: true},
 			ErrorExceptionMessage: AttributeConfig{Enabled: true},
 			ErrorStackTrace:       AttributeConfig{Enabled: true},
+			TimestampUs:           AttributeConfig{Enabled: true},
 		},
 	}
 }

@@ -18,10 +18,6 @@
 package enrichments
 
 import (
-	"crypto/rand"
-	"encoding/hex"
-	"io"
-
 	"go.opentelemetry.io/collector/pdata/pcommon"
 	semconv "go.opentelemetry.io/otel/semconv/v1.25.0"
 )
@@ -50,15 +46,4 @@ func getErrorEventContext(attributes pcommon.Map) errorEventContext {
 		return true
 	})
 	return ec
-}
-
-// generateErrorID generates a unique error ID, follows the same pattern as the apm-data package.
-func generateErrorID() (string, error) {
-	var u [16]byte
-	if _, err := io.ReadFull(rand.Reader, u[:]); err != nil {
-		return "", err
-	}
-	buf := make([]byte, 32)
-	hex.Encode(buf, u[:])
-	return string(buf), nil
 }

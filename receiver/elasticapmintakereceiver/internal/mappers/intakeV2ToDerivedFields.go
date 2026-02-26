@@ -217,10 +217,10 @@ func setExceptionObject(e *modelpb.Exception, exceptionMap pcommon.Map, index in
 		exceptionMap.PutInt(elasticattr.ErrorExceptionParent, int64(parentIdx))
 	}
 
-	putNonEmptyStr(exceptionMap, elasticattr.ErrorExceptionCode, e.Code)
-	putNonEmptyStr(exceptionMap, elasticattr.ErrorExceptionMessage, e.Message)
-	putNonEmptyStr(exceptionMap, elasticattr.ErrorExceptionType, e.Type)
-	putNonEmptyStr(exceptionMap, elasticattr.ErrorExceptionModule, e.Module)
+	putNonEmptyStr(exceptionMap, elasticattr.ErrorExceptionCodeField, e.Code)
+	putNonEmptyStr(exceptionMap, elasticattr.ErrorExceptionMessageField, e.Message)
+	putNonEmptyStr(exceptionMap, elasticattr.ErrorExceptionTypeField, e.Type)
+	putNonEmptyStr(exceptionMap, elasticattr.ErrorExceptionModuleField, e.Module)
 	putPtrBool(exceptionMap, elasticattr.ErrorExceptionHandledField, e.Handled)
 
 	// Set attributes if present
